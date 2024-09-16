@@ -37,10 +37,6 @@ jobs:
           git submodule foreach git checkout main
           git submodule foreach git pull origin main
       
-      - name: Bump version
-        run: |
-          npm version patch -m "Bump version to %s"
-      
       - name: Pull and rebase
         run: |
           git pull --rebase origin main
@@ -49,6 +45,25 @@ jobs:
         run: |
           git push
           git push --tags
+      
+      - name: Get version from package.json
+        id: package-version
+        run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+      
+      - name: Check if version exists
+        id: check-version
+        run: |
+          if git rev-parse v${{ steps.package-version.outputs.version }} >/dev/null 2>&1; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+      
+      - name: Create and push tag
+        if: steps.check-version.outputs.exists == 'false'
+        run: |
+          git tag v${{ steps.package-version.outputs.version }}
+          git push origin v${{ steps.package-version.outputs.version }}
       
       - name: Publish to npm
         run: npm publish
