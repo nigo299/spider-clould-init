@@ -1,6 +1,6 @@
 {
   "name": "spider-cloud-init",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "type": "module",
   "bin": {
     "spider-cloud-init": "./bin/cli.js"
