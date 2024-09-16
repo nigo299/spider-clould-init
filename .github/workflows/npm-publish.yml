@@ -15,12 +15,6 @@ jobs:
           node-version: '16'
           registry-url: 'https://registry.npmjs.org'
       
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
-        run: npm run build # 如果您的项目需要构建
-      
       - name: Bump version
         run: |
           git config --local user.email "chenzhuo9729@gmail.com"
