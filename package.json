@@ -1,0 +1,43 @@
+{
+  "name": "spider-cloud-init",
+  "version": "1.1.1",
+  "type": "module",
+  "bin": {
+    "spider-cloud-init": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nigo299/spider-cloud-init.git"
+  },
+  "description": "一个用于初始化 Spider Cloud 项目的 CLI 工具",
+  "author": "Nigo",
+  "main": "bin/cli.js",
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "spider-cloud",
+    "project-generator"
+  ],
+  "dependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.5.4",
+    "chalk": "^5.3.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^10.2.2",
+    "ora": "^5.4.1",
+    "typescript": "^5.6.2"
+  },
+  "resolutions": {
+    "bin-wrapper": "npm:bin-wrapper-china"
+  },
+  "devDependencies": {
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "ts-node": "^10.9.2"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix"
+    ]
+  }
+}

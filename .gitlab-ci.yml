@@ -1,0 +1,18 @@
+stages:
+  - sync
+  
+sync_to_github:
+  stage: sync
+  image: lsage/pnpm-circleci-node:16.13.1-pnpm7.5.1
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - git submodule update --init --recursive
+    - git config --global user.email "chenzhuo9729@gmail.com"
+    - git config --global user.name "nigo299"
+    - git remote add github https://${GITHUB_TOKEN}@github.com/nigo299/spider-clould-init.git
+    - git push github HEAD:main --force
+  only:
+    - main  # 或者您想要触发同步的分支
+  tags:
+    - share-beta-fe-package-runner
