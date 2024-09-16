@@ -7,10 +7,39 @@ sync_to_github:
   variables:
     GIT_STRATEGY: clone
   script:
-    - git submodule update --init --recursive
     - git config --global user.email "chenzhuo9729@gmail.com"
     - git config --global user.name "nigo299"
+    
+    # 主仓库同步
     - git remote add github https://${GITHUB_TOKEN}@github.com/nigo299/spider-clould-init.git
+    - git push github HEAD:main --force
+    - git push github --tags
+    
+    # 子模块处理
+    - |
+      git submodule foreach '
+        SUBMODULE_NAME=$(basename $name)
+        echo "Processing submodule: $SUBMODULE_NAME"
+        
+        # 检查 GitHub 上是否存在该仓库
+        REPO_EXISTS=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+          https://api.github.com/repos/nigo299/$SUBMODULE_NAME | jq -r ".id // empty")
+        
+        if [ -z "$REPO_EXISTS" ]; then
+          echo "Creating repository for $SUBMODULE_NAME on GitHub"
+          curl -X POST -H "Authorization: token ${GITHUB_TOKEN}" \
+            -d "{\"name\":\"$SUBMODULE_NAME\", \"private\": true}" \
+            https://api.github.com/user/repos
+        fi
+        
+        git remote add github https://${GITHUB_TOKEN}@github.com/nigo299/$SUBMODULE_NAME.git || true
+        git push github HEAD:main --force
+      '
+    
+    # 更新 .gitmodules 文件中的 URL
+    - sed -i 's|http://gitlab.cqlvc.com/spider-cloud/|https://github.com/nigo299/|g' .gitmodules
+    - git add .gitmodules
+    - git commit -m "Update submodule URLs for GitHub" || true
     - git push github HEAD:main --force
   only:
     - main  # 或者您想要触发同步的分支
