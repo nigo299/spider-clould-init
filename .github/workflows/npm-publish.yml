@@ -11,11 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: recursive
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org'
+          submodules: false  # 不要立即检出子模块
       
       - name: Update submodule URLs
         run: |
@@ -25,10 +21,18 @@ jobs:
           git add .gitmodules
           git commit -m "Update submodule URLs for GitHub" || true
       
-      - name: Update submodules
+      - name: Update and init submodules
         run: |
           git submodule sync
           git submodule update --init --recursive
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Update submodules content
+        run: |
           git submodule foreach git checkout main
           git submodule foreach git pull origin main
       
