@@ -11,7 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: false  # 不要立即检出子模块
+          submodules: false
+          fetch-depth: 0
       
       - name: Update submodule URLs
         run: |
@@ -39,6 +40,10 @@ jobs:
       - name: Bump version
         run: |
           npm version patch -m "Bump version to %s"
+      
+      - name: Pull and rebase
+        run: |
+          git pull --rebase origin main
       
       - name: Push changes
         run: |
