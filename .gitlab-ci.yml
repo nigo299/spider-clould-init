@@ -1,0 +1,69 @@
+stages:
+  - sync
+  
+sync_to_github:
+  stage: sync
+  image: lsage/pnpm-circleci-node:16.13.1-pnpm7.5.1
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - git config --global user.email "chenzhuo9729@gmail.com"
+    - git config --global user.name "nigo299"
+    
+    # 主仓库同步
+    - git remote add github https://${GITHUB_TOKEN}@github.com/nigo299/spider-clould-init.git
+    - git push github HEAD:main --force
+    - git push github --tags
+    
+    # 更新 .gitmodules 文件中的 URL
+    - sed -i 's|http://gitlab.cqlvc.com/spider-cloud/|https://github.com/nigo299/|g' .gitmodules
+    - git add .gitmodules
+    - git commit -m "Update submodule URLs for GitHub" || true
+    
+    # 子模块处理
+    - |
+      git submodule foreach '
+        SUBMODULE_NAME=$(basename $name)
+        echo "Processing submodule: $SUBMODULE_NAME"
+        
+        # 确保子模块目录存在
+        mkdir -p $name
+        cd $name
+        
+        # 初始化子模块仓库（如果还没有初始化）
+        git init
+        git remote add origin https://${GITHUB_TOKEN}@github.com/nigo299/$SUBMODULE_NAME.git
+        
+        # 获取子模块内容
+        git fetch --all
+        
+        # 如果远程仓库是空的，创建一个初始提交
+        if ! git rev-parse --verify origin/main >/dev/null 2>&1; then
+          echo "Initial commit" > README.md
+          git add README.md
+          git commit -m "Initial commit"
+        else
+          git reset --hard origin/main
+        fi
+        
+        # 推送子模块内容到 GitHub
+        git push -u origin main --force
+        
+        cd $toplevel
+      '
+    
+    # 更新主仓库中的子模块引用
+    - git add template
+    - git commit -m "Update submodule reference" || true
+    - git push github HEAD:main --force
+    
+    # 确保子模块更新
+    - git submodule sync
+    - git submodule update --init --recursive
+    
+    # 验证子模块状态
+    - git submodule status
+  only:
+    - main  # 或者您想要触发同步的分支
+  tags:
+    - share-beta-fe-package-runner
