@@ -20,16 +20,20 @@ const TEMPLATE_REPO = process.env.TEMPLATE_REPO || '/spider-cloud/spider-cloud-t
 async function cloneTemplate(projectDir) {
   const git = simpleGit();
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spider-cloud-template-'));
+  const templateDir = path.join(projectDir, 'template');
   
   try {
     await git.clone(`${GITLAB_URL}${TEMPLATE_REPO}`, tempDir);
-    fs.copySync(tempDir, projectDir, { overwrite: true });
+    // 创建 template 目录并将克隆的内容移动到其中
+    fs.mkdirSync(templateDir, { recursive: true });
+    fs.copySync(tempDir, templateDir);
   } catch (error) {
     console.error('克隆模板失败:', error);
     throw error;
   } finally {
     fs.removeSync(tempDir);
   }
+  return templateDir; // 返回 template 目录的路径
 }
 
 const projectChoices = [
@@ -136,11 +140,11 @@ async function main() {
     }
 
     spinner.text = '正在从 GitLab 拉取模板文件...';
-    await cloneTemplate(projectDir);
+    const templateDir = await cloneTemplate(projectDir);
 
     // 复制 packages 目录
     projectTypes.forEach((type) => {
-      const sourceDir = path.join(projectDir, `packages/${type}`);
+      const sourceDir = path.join(templateDir, `packages/${type}`);
       const destDir = path.join(projectDir, `packages/${type}`);
       if (fs.existsSync(sourceDir)) {
         fs.copySync(sourceDir, destDir);
@@ -150,12 +154,12 @@ async function main() {
     });
 
     // 复制根目录下除 packages 目录之外的所有文件和文件夹
-    const files = fs.readdirSync(projectDir);
+    const files = fs.readdirSync(templateDir);
     files.forEach((file) => {
-      const sourcePath = path.join(projectDir, file);
+      const sourcePath = path.join(templateDir, file);
       const destPath = path.join(projectDir, file);
-      // 排除 packages 目录
-      if (file !== 'packages' && fs.existsSync(sourcePath)) {
+      // 排除 packages 目录和 template 目录本身
+      if (file !== 'packages' && file !== 'template' && fs.existsSync(sourcePath)) {
         if (fs.lstatSync(sourcePath).isDirectory()) {
           fs.copySync(sourcePath, destPath);
         } else {

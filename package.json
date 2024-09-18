@@ -1,12 +1,9 @@
 {
-  "name": "@lc-frontend/spider-cloud-init",
+  "name": "spider-cloud-init",
   "version": "1.2.7",
   "type": "module",
   "bin": {
     "spider-cloud-init": "./bin/cli.js"
-  },
-  "publishConfig": {
-    "access": "restricted"
   },
   "repository": {
     "type": "git",
