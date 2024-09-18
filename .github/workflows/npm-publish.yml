@@ -12,22 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: false
-          fetch-depth: 0
-      
-      - name: Update submodule URLs
-        run: |
-          git config --global user.email "chenzhuo9729@gmail.com"
-          git config --global user.name "nigo299"
-          sed -i 's|http://gitlab.cqlvc.com/spider-cloud/|https://github.com/nigo299/|g' .gitmodules
-          git add .gitmodules
-          git commit -m "Update submodule URLs for GitHub" || true
-      
-      - name: Update and init submodules
-        run: |
-          git submodule sync
-          git submodule update --init --recursive
       
       - uses: actions/setup-node@v3
         with:
@@ -36,21 +20,23 @@ jobs:
       
       - name: Get version from package.json
         id: package-version
-        run: echo "::set-output name=version::$(node -p "require('./package.json').version")"
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
       
       - name: Check if version changed
         id: version-changed
         run: |
-          LATEST_VERSION=$(npm view spider-cloud-init version || echo "0.0.0")
+          LATEST_VERSION=$(npm view @lc-frontend/spider-cloud-init version || echo "0.0.0")
           if [ "${{ steps.package-version.outputs.version }}" != "$LATEST_VERSION" ]; then
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_OUTPUT
           fi
       
       - name: Create and push tag
         if: steps.version-changed.outputs.changed == 'true'
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git tag v${{ steps.package-version.outputs.version }}
           git push origin v${{ steps.package-version.outputs.version }}
       
