@@ -15,11 +15,6 @@ sync_to_github:
     - git push github HEAD:main --force
     - git push github --tags
     
-    # 更新 .gitmodules 文件中的 URL（如果还需要的话）
-    - sed -i 's|http://gitlab.cqlvc.com/spider-cloud/|https://github.com/nigo299/|g' .gitmodules
-    - git add .gitmodules
-    - git commit -m "Update submodule URLs for GitHub" || true
-    
     # 推送更改到 GitHub
     - git push github HEAD:main --force
     
