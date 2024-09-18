@@ -8,6 +8,29 @@ import { dirname } from 'path';
 import { execSync } from 'child_process';
 import ora from 'ora';
 import chalk from 'chalk';
+import { simpleGit } from 'simple-git';
+import dotenv from 'dotenv';
+import os from 'os';
+
+dotenv.config();
+
+const GITLAB_URL = process.env.GITLAB_URL || 'http://gitlab.cqlvc.com';
+const TEMPLATE_REPO = process.env.TEMPLATE_REPO || '/spider-cloud/spider-cloud-template.git';
+
+async function cloneTemplate(projectDir) {
+  const git = simpleGit();
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spider-cloud-template-'));
+  
+  try {
+    await git.clone(`${GITLAB_URL}${TEMPLATE_REPO}`, tempDir);
+    fs.copySync(tempDir, projectDir, { overwrite: true });
+  } catch (error) {
+    console.error('克隆模板失败:', error);
+    throw error;
+  } finally {
+    fs.removeSync(tempDir);
+  }
+}
 
 const projectChoices = [
   { name: 'PC', value: 'pc' },
@@ -112,12 +135,12 @@ async function main() {
       fs.mkdirSync(projectDir, { recursive: true });
     }
 
-    spinner.text = '正在复制模板文件...';
-    const templateDir = path.resolve(__dirname, '../template');
+    spinner.text = '正在从 GitLab 拉取模板文件...';
+    await cloneTemplate(projectDir);
 
     // 复制 packages 目录
     projectTypes.forEach((type) => {
-      const sourceDir = path.join(templateDir, `packages/${type}`);
+      const sourceDir = path.join(projectDir, `packages/${type}`);
       const destDir = path.join(projectDir, `packages/${type}`);
       if (fs.existsSync(sourceDir)) {
         fs.copySync(sourceDir, destDir);
@@ -127,9 +150,9 @@ async function main() {
     });
 
     // 复制根目录下除 packages 目录之外的所有文件和文件夹
-    const files = fs.readdirSync(templateDir);
+    const files = fs.readdirSync(projectDir);
     files.forEach((file) => {
-      const sourcePath = path.join(templateDir, file);
+      const sourcePath = path.join(projectDir, file);
       const destPath = path.join(projectDir, file);
       // 排除 packages 目录
       if (file !== 'packages' && fs.existsSync(sourcePath)) {
@@ -146,7 +169,7 @@ async function main() {
     fs.writeFileSync(path.join(projectDir, '.npmrc'), npmrcContent.trim());
 
     // 复制 README.md 文件
-    const readmePath = path.join(templateDir, 'README-zh_CN.md');
+    const readmePath = path.join(projectDir, 'README-zh_CN.md');
     if (fs.existsSync(readmePath)) {
       fs.copyFileSync(readmePath, path.join(projectDir, 'README.md'));
     } else {
