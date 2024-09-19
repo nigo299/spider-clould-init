@@ -1,0 +1,57 @@
+{
+  "name": "spider-cloud-init",
+  "version": "2.0.0",
+  "type": "module",
+  "bin": {
+    "spider-cloud-init": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts",
+    "start": "node dist/index.js",
+    "dev": "tsup src/index.ts --format esm --watch --onSuccess \"node dist/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nigo299/spider-cloud-init.git"
+  },
+  "description": "一个用于初始化 Spider Cloud 项目的 CLI 工具",
+  "author": "Nigo",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "spider-cloud",
+    "project-generator"
+  ],
+  "dependencies": {
+    "@types/node": "^22.5.4",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.1",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^10.2.2",
+    "ora": "^5.4.1",
+    "simple-git": "^3.22.0",
+    "typescript": "^5.6.2"
+  },
+  "resolutions": {
+    "bin-wrapper": "npm:bin-wrapper-china"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix"
+    ]
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
