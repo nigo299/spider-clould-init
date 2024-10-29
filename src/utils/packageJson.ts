@@ -61,6 +61,7 @@ function getCommonScripts(): Record<string, string> {
   return {
     "prepare": "husky",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "commit": "git add . && git-cz"
   };
 }
