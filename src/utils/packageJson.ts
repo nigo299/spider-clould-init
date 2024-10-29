@@ -23,6 +23,7 @@ function getRelevantScripts(projectTypes: string[]): Record<string, string> {
       case 'pc':
         Object.assign(relevantScripts, {
           "build:pc": "pnpm run --filter @web/pc build",
+          "build-test:pc": "pnpm run --filter @web/pc build-test",
           "clean:pc": "pnpm run --filter @web/pc clean",
           "start:pc": "pnpm run --filter @web/pc start",
           "preview:pc": "pnpm run --filter @web/pc preview"
@@ -31,7 +32,7 @@ function getRelevantScripts(projectTypes: string[]): Record<string, string> {
       case 'h5':
         Object.assign(relevantScripts, {
           "build:h5": "pnpm run --filter @web/h5 build",
-          "build:h5-test": "pnpm run --filter @web/h5 build-test",
+          "build-test:h5": "pnpm run --filter @web/h5 build-test",
           "clean:h5": "pnpm run --filter @web/h5 clean",
           "start:h5": "pnpm run --filter @web/h5 start",
           "preview:h5": "pnpm run --filter @web/h5 preview"
@@ -59,9 +60,9 @@ function getRelevantScripts(projectTypes: string[]): Record<string, string> {
 
 function getCommonScripts(): Record<string, string> {
   return {
+    "commit": "git add . && git-cz",
     "prepare": "husky",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
-    "format": "prettier --write .",
-    "commit": "git add . && git-cz"
+    "format": "prettier --write ."
   };
 }
