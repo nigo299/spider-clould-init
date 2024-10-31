@@ -4,7 +4,7 @@ import path from 'path';
 import os from 'os';
 
 const GITLAB_URL = process.env.GITLAB_URL || 'http://gitlab.cqlvc.com';
-const TEMPLATE_REPO = process.env.TEMPLATE_REPO || '/spider-design/spider-cloud-cli.git';
+const TEMPLATE_REPO = process.env.TEMPLATE_REPO || '/spider-design/spider-cloud-template.git';
 
 export async function cloneTemplate(projectDir: string): Promise<string> {
     const git = simpleGit();
