@@ -91,17 +91,17 @@ export async function writeFiles(config: ProjectConfig) {
   fs.writeFileSync(path.join(config.projectDir, '.npmrc'), npmrcContent.trim());
 
   // 复制 README.md 文件
-  const readmePath = path.join(config.projectDir, 'README-zh_CN.md');
+  const readmePath = path.join(config.projectDir, 'README.md');
   if (fs.existsSync(readmePath)) {
     fs.copyFileSync(readmePath, path.join(config.projectDir, 'README.md'));
   } else {
-    console.warn('警告：模板中缺少 README-zh_CN.md 文件');
+    console.warn('警告：模板中缺少 README.md 文件');
   }
 }
 
 export async function cleanupFiles(config: ProjectConfig) {
   // 清理不需要的文件和目录，但保留当前目录的 .git
-  const unnecessaryFiles = ['.gitlab-ci.yml', 'README-zh_CN.md'];
+  const unnecessaryFiles = ['.gitlab-ci.yml', 'README.md'];
   unnecessaryFiles.forEach(file => {
     const filePath = path.join(config.projectDir, file);
     if (fs.existsSync(filePath)) {
