@@ -63,6 +63,10 @@ function getCommonScripts(): Record<string, string> {
     "commit": "git add . && git-cz",
     "prepare": "husky",
     "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "deps:check": "taze",
+    "deps:update": "taze major -w",
+    "deps:patch": "taze patch -w",
+    "deps:write": "taze write -w"
   };
 }
