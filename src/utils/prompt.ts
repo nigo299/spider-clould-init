@@ -34,9 +34,15 @@ export async function promptForConfig(): Promise<ProjectConfig> {
       choices: projectChoices,
       validate: (answer) => answer.length > 0 || '请至少选择一个项目类型',
     },
+    {
+      type: 'confirm',
+      name: 'installDeps',
+      message: '是否自动安装依赖？',
+      default: false,
+    }
   ]);
 
-  const { useCurrentDir, projectName, projectTypes } = answers;
+  const { useCurrentDir, projectName, projectTypes, installDeps } = answers;
   const currentDir = process.cwd();
   const projectDir = useCurrentDir ? currentDir : path.resolve(currentDir, projectName);
 
@@ -45,5 +51,6 @@ export async function promptForConfig(): Promise<ProjectConfig> {
     projectName: useCurrentDir ? path.basename(currentDir) : projectName,
     projectTypes,
     projectDir,
+    installDeps,
   };
 }

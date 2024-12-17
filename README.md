@@ -1,46 +1,109 @@
-# spider-cloud-cli
+# Spider Cloud CLI
 
-spider-cloud-design 脚手架
+Spider Cloud CLI 是一个用于快速创建和初始化 Spider Cloud 项目的命令行工具。它提供了直观的用户界面和丰富的项目模板，帮助开发者快速搭建项目框架。
 
-## Getting started
+## 特性
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- 🚀 交互式项目创建向导
+- 📦 多种项目类型支持 (PC, H5, IE, Mobile)
+- 🎨 美观的命令行界面
+- 🔄 实时进度显示
+- ⚡️ 自动依赖管理
+- 🛠 项目模板管理
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 安装
 
-## Add your files
+```bash
+# 使用 npm
+npm install -g spider-cloud-init
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+# 使用 yarn
+yarn global add spider-cloud-init
+
+# 使用 pnpm
+pnpm add -g spider-cloud-init
+```
+
+## 使用方法
+
+### 创建新项目
+
+```bash
+spider-cloud-init create
+```
+
+按照提示进行操作：
+1. 选择是否在当前目录创建项目
+2. 输入项目名称（如果不在当前目录创建）
+3. 选择项目类型（支持多选）
+4. 选择是否自动安装依赖
+
+### 项目结构
+
+创建的项目将包含以下基本结构：
 
 ```
-cd existing_repo
-git remote add origin http://gitlab.cqlvc.com/spider-cloud/spider-cloud-cli.git
-git branch -M main
-git push -uf origin main
+your-project/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── utils/
+│   └── main.ts
+├── public/
+├── package.json
+└── README.md
 ```
 
-## Integrate with your tools
+## 开发
 
-- [ ] [Set up project integrations](http://gitlab.cqlvc.com/spider-cloud/spider-cloud-cli/-/settings/integrations)
+### 环境要求
 
-## Collaborate with your team
+- Node.js >= 14
+- pnpm >= 6
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### 本地开发
 
-## Test and Deploy
+```bash
+# 克隆仓库
+git clone http://gitlab.cqlvc.com/spider-cloud/spider-cloud-cli.git
 
-Use the built-in continuous integration in GitLab.
+# 安装依赖
+pnpm install
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+# 启动开发模式
+pnpm dev
+
+# 构建
+pnpm build
+```
+
+### 项目结构
+
+```
+src/
+├── commands/        # CLI 命令
+├── utils/          # 工具函数
+├── types.ts        # 类型定义
+└── index.ts        # 入口文件
+```
+
+## 配置
+
+Spider Cloud CLI 支持以下配置选项：
+
+- `projectTypes`: 项目类型选项
+  - PC
+  - H5
+  - IE
+  - Mobile
+
+## 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+## 许可证
+
+[MIT](LICENSE)
 
 ***
 
