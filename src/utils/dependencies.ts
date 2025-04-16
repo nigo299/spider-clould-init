@@ -1,46 +1,27 @@
 import { execSync } from 'child_process';
 import { ProjectConfig } from '../types.js';
 import chalk from 'chalk';
-import inquirer from 'inquirer';
+import which from 'which';
 
-export async function installDependencies(config: ProjectConfig): Promise<boolean> {
-  let installDeps = false;
-  try {
-    const answer = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'installDeps',
-        message: '是否现在安装依赖？',
-        default: false,
-      },
-    ]);
-    installDeps = answer.installDeps;
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('User force closed the prompt')) {
-      console.log(chalk.yellow('\n退出'));
-      return false;
-    } else {
-      throw error;
-    }
-  }
+function detectPackageManager(): 'pnpm' | 'yarn' | 'npm' {
+  if (which.sync('pnpm', { nothrow: true })) return 'pnpm';
+  if (which.sync('yarn', { nothrow: true })) return 'yarn';
+  return 'npm';
+}
 
-  if (installDeps) {
-    console.log(chalk.blue('\n正在安装依赖...'));
-    execSync('pnpm install', { cwd: config.projectDir, stdio: 'inherit' });
-    console.log(chalk.green('\n依赖安装完成！'));
-  } else {
+export async function installDependencies(config: ProjectConfig, pm?: string): Promise<boolean> {
+  if (!config.installDeps) {
     console.log(chalk.yellow('\n您选择了不安装依赖。'));
+    return false;
   }
-
-  console.log(chalk.yellow('\n下一步：'));
-  if (!installDeps) {
-    console.log(chalk.yellow('  1. 安装依赖：'));
-    console.log(chalk.yellow('     pnpm install'));
+  let packageManager = pm || detectPackageManager();
+  try {
+    console.log(chalk.cyan(`\n正在使用 ${packageManager} 安装依赖...`));
+    execSync(`${packageManager} install`, { cwd: config.projectDir, stdio: 'inherit', timeout: 5 * 60 * 1000 });
+    console.log(chalk.green(`\n依赖安装完成！（使用 ${packageManager}）`));
+    return true;
+  } catch (error) {
+    console.error(chalk.red('\n依赖安装失败，请检查网络、权限或包管理器。'));
+    return false;
   }
-  console.log(chalk.yellow(`  ${installDeps ? '1' : '2'}. 启动项目：`));
-  config.projectTypes.forEach((type) => {
-    console.log(chalk.yellow(`     pnpm start:${type}`));
-  });
-
-  return installDeps;
 }
